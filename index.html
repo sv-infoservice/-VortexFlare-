@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vortex Flare | Premium Portfolio</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: { 100: '#F9F1D0', 300: '#D4AF37', 500: '#C5A028', 900: '#8A6E15' }
+                    },
+                    fontFamily: { sync: ['Syncopate', 'sans-serif'], inter: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #020202;
+            --card-bg: rgba(10, 10, 10, 0.95);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --gold-gradient: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            --gold-color: #D4AF37;
+            --radius-card: 24px;
+            --radius-btn: 50px;
+        }
+
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        body.custom-cursor-on, body.custom-cursor-on * { cursor: none !important; }
+        body.no-scroll { overflow: hidden; }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #D4AF37, #8A6E15); border-radius: 10px; }
+
+        .text-gold-gradient {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: shine 6s linear infinite;
+        }
+
+        @keyframes shine { to { background-position: 200% center; } }
+
+        /* ==================== HERO TITLE ==================== */
+        .hero-title { opacity: 0; transform: translateY(30px); }
+        .hero-title.revealed { opacity: 1; transform: translateY(0); }
+
+        .hero-title .title-part {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(40px) rotateX(-15deg);
+            transform-origin: center bottom;
+        }
+
+        .hero-title.revealed .title-part { opacity: 1; transform: translateY(0) rotateX(0); }
+        .hero-title.revealed .title-part:nth-child(1) { transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0s; }
+        .hero-title.revealed .title-part:nth-child(2) { transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s; }
+        .hero-title.revealed .title-part:nth-child(3) { transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s; }
+
+        /* ==================== CUSTOM CURSOR ==================== */
+        .cursor-dot, .cursor-ring {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100001;
+            opacity: 0;
+            transition: opacity 0.3s;
+            will-change: transform;
+        }
+
+        .cursor-dot { width: 6px; height: 6px; background: var(--gold-color); border-radius: 50%; }
+        .cursor-ring {
+            width: 36px; height: 36px;
+            border: 1.5px solid rgba(212, 175, 55, 0.5);
+            border-radius: 50%;
+            z-index: 100000;
+            transition: opacity 0.3s, width 0.15s, height 0.15s;
+        }
+
+        .cursor-ring.hover { width: 50px; height: 50px; }
+        body.custom-cursor-on .cursor-dot { opacity: 1; }
+        body.custom-cursor-on .cursor-ring { opacity: 0.5; }
+
+        @media (hover: none), (pointer: coarse) {
+            .cursor-dot, .cursor-ring { display: none !important; }
+        }
+
+        /* ==================== GLOW EFFECTS ==================== */
+        .cursor-glow {
+            position: fixed;
+            width: 280px; height: 280px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 9990;
+            opacity: 0;
+            transition: opacity 0.4s;
+            border-radius: 50%;
+            will-change: transform;
+        }
+
+        .cursor-glow.active { opacity: 1; }
+
+        body.beautiful-glow .cursor-glow {
+            width: 350px; height: 350px;
+            background: 
+                radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 30% 40%, rgba(255, 215, 100, 0.08) 0%, transparent 50%);
+        }
+
+        body.ultra-glow .cursor-glow {
+            width: 380px; height: 380px;
+            background: 
+                radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 45%),
+                radial-gradient(ellipse at 30% 30%, rgba(255, 230, 150, 0.06) 0%, transparent 50%);
+        }
+
+        body.ultra-glow .premium-card {
+            box-shadow: 
+                0 0 50px -10px rgba(212, 175, 55, 0.4),
+                inset 0 0 40px -20px rgba(212, 175, 55, 0.2),
+                0 0 100px -30px rgba(212, 175, 55, 0.3) !important;
+            border-color: rgba(212, 175, 55, 0.4) !important;
+        }
+
+        body.ultra-glow .premium-btn {
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3) !important;
+        }
+
+        body.ultra-glow .text-gold-gradient {
+            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5));
+        }
+
+        @media (max-width: 768px) {
+            .cursor-glow { width: 180px; height: 180px; }
+            body.beautiful-glow .cursor-glow { width: 250px; height: 250px; }
+            body.ultra-glow .cursor-glow { width: 280px; height: 280px; }
+        }
+
+        /* ==================== STARFIELD ==================== */
+        #starfield { 
+            position: fixed; 
+            inset: 0; 
+            z-index: -1; 
+            opacity: 0.4; 
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        body.animated-bg #starfield { opacity: 0.7; }
+        body.animated-bg.beautiful-glow #starfield,
+        body.animated-bg.ultra-glow #starfield { opacity: 0.85; }
+
+        /* ==================== LEFT SIDEBAR BUTTON ==================== */
+        #sidebarToggle {
+            position: fixed;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 9999;
+            width: 42px; height: 42px;
+            background: rgba(8, 8, 8, 0.95);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            color: var(--gold-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(10px);
+        }
+
+        #sidebarToggle.visible { opacity: 1; pointer-events: auto; }
+        #sidebarToggle:hover { border-color: rgba(212, 175, 55, 0.5); background: rgba(212, 175, 55, 0.1); transform: translateY(-50%) scale(1.05); }
+        #sidebarToggle.open { left: calc(260px - 21px); }
+        #sidebarToggle i { font-size: 1rem; }
+
+        @media (max-width: 768px) {
+            #sidebarToggle { width: 38px; height: 38px; left: 0.5rem; }
+            #sidebarToggle.open { left: calc(240px - 19px); }
+        }
+
+        /* ==================== RIGHT SETTINGS BUTTON ==================== */
+        #settingsBtn {
+            position: fixed;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10001;
+            width: 42px; height: 42px;
+            background: rgba(8, 8, 8, 0.95);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            color: var(--gold-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(10px);
+        }
+
+        #settingsBtn.visible { opacity: 1; pointer-events: auto; }
+        #settingsBtn:hover { border-color: rgba(212, 175, 55, 0.5); background: rgba(212, 175, 55, 0.1); }
+        #settingsBtn.open { right: calc(320px - 21px); }
+        #settingsBtn.open i { transform: rotate(90deg); }
+        #settingsBtn i { font-size: 1rem; transition: transform 0.4s; }
+
+        @media (max-width: 768px) {
+            #settingsBtn { width: 38px; height: 38px; right: 0.5rem; }
+            #settingsBtn.open { right: calc(300px - 19px); }
+        }
+
+        /* ==================== SETTINGS PANEL ==================== */
+        #settingsPanel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            width: 320px;
+            background: rgba(8, 8, 8, 0.98);
+            border-left: 1px solid rgba(212, 175, 55, 0.15);
+            z-index: 10000;
+            padding: 1.5rem;
+            backdrop-filter: blur(20px);
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        #settingsPanel.open { transform: translateX(0); }
+
+        .settings-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .settings-overlay.active { opacity: 1; visibility: visible; }
+
+        .settings-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .settings-header-left { display: flex; align-items: center; gap: 0.6rem; }
+        .settings-header i { color: var(--gold-color); font-size: 1rem; }
+        .settings-header h3 { font-family: 'Syncopate', sans-serif; font-size: 0.6rem; color: white; letter-spacing: 0.12em; margin: 0; }
+
+        .settings-close {
+            width: 32px; height: 32px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: #666;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .settings-close:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+
+        .settings-section { margin-bottom: 1.25rem; }
+        .settings-section-title {
+            font-size: 0.6rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 0.6rem;
+            padding-left: 0.5rem;
+            font-weight: 500;
+        }
+
+        .settings-options { display: flex; flex-direction: column; gap: 0.5rem; }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+
+        .setting-item:hover { background: rgba(255, 255, 255, 0.04); border-color: rgba(212, 175, 55, 0.1); }
+        .setting-item.disabled { opacity: 0.4; pointer-events: none; }
+        .setting-label { display: flex; align-items: center; gap: 0.6rem; }
+        .setting-label i { color: var(--gold-color); font-size: 0.85rem; width: 18px; text-align: center; opacity: 0.8; }
+        .setting-label span { font-size: 0.75rem; color: #bbb; font-weight: 300; }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px; height: 24px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 18px; height: 18px;
+            background: #555;
+            border-radius: 50%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .toggle-switch.active { background: rgba(212, 175, 55, 0.3); }
+        .toggle-switch.active::after { left: 23px; background: var(--gold-color); }
+
+        .settings-note {
+            background: rgba(255, 100, 100, 0.08);
+            border: 1px solid rgba(255, 100, 100, 0.2);
+            border-radius: 8px;
+            padding: 0.6rem 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .settings-note p { font-size: 0.6rem; color: rgba(255, 150, 150, 0.8); line-height: 1.5; margin: 0; }
+        .settings-note i { margin-right: 0.35rem; font-size: 0.55rem; }
+
+        @media (max-width: 768px) {
+            #settingsPanel { width: 300px; padding: 1.25rem; }
+            .setting-item { padding: 0.65rem 0.85rem; }
+            .setting-label span { font-size: 0.7rem; }
+        }
+
+        /* ==================== BLUR REVEAL EFFECT ==================== */
+        body.blur-effect-on .blur-reveal {
+            filter: blur(8px);
+            transition: filter 1.5s ease-out, opacity 0.5s, transform 0.5s;
+        }
+
+        body.blur-effect-on .blur-reveal.revealed { filter: blur(0); }
+
+        /* ==================== PREMIUM CARD ==================== */
+        .premium-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-card);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease-out, border-color 0.3s, box-shadow 0.3s, filter 1.5s ease-out;
+            backdrop-filter: blur(10px);
+            will-change: transform;
+        }
+
+        body.card-glow-on .premium-card {
+            box-shadow: 
+                0 0 20px -8px rgba(212, 175, 55, 0.2),
+                inset 0 0 20px -15px rgba(212, 175, 55, 0.1);
+        }
+
+        body.beautiful-glow.card-glow-on .premium-card {
+            box-shadow: 
+                0 0 30px -8px rgba(212, 175, 55, 0.3),
+                inset 0 0 25px -15px rgba(212, 175, 55, 0.15);
+        }
+
+        .premium-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(200px circle at var(--card-x, 50%) var(--card-y, 50%), rgba(212, 175, 55, 0.05), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        body.flashlight-on .premium-card:hover::before { opacity: 1; }
+        .premium-card:hover { border-color: rgba(212, 175, 55, 0.2); }
+        .premium-card .premium-card { background: rgba(5, 5, 5, 0.9); border-color: rgba(255, 255, 255, 0.04); }
+
+        body.hover-lift-on .premium-card {
+            transition: transform 0.3s ease-out, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        body.hover-lift-on .premium-card:hover {
+            transform: translateY(-10px) !important;
+        }
+
+        body.hover-lift-on.card-glow-on .premium-card:hover {
+            box-shadow: 
+                0 15px 40px -10px rgba(0, 0, 0, 0.6),
+                0 0 25px -8px rgba(212, 175, 55, 0.25);
+        }
+
+        /* ==================== REMAINING STYLES ==================== */
+        .premium-btn {
+            background: linear-gradient(135deg, rgba(12, 12, 12, 0.98), rgba(25, 25, 25, 0.98));
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--gold-color);
+            border-radius: var(--radius-btn);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .premium-btn::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .premium-btn:hover { border-color: var(--gold-color); box-shadow: 0 0 20px rgba(212, 175, 55, 0.12); color: #fff; }
+        .premium-btn:hover::after { left: 100%; }
+
+        .intro-btn {
+            background: linear-gradient(135deg, rgba(15, 15, 15, 0.98), rgba(30, 30, 30, 0.98));
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            padding: 1rem 2.5rem;
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.08); }
+            50% { box-shadow: 0 0 50px rgba(212, 175, 55, 0.15); }
+        }
+
+        .intro-btn:hover { animation: none; box-shadow: 0 0 60px rgba(212, 175, 55, 0.2); }
+
+        @media (max-width: 640px) {
+            .intro-btn { padding: 0.875rem 2rem; font-size: 0.8rem; }
+        }
+
+        #loadingScreen {
+            position: fixed; inset: 0;
+            background: var(--bg-color);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        #loadingScreen.fade-out { animation: fadeOut 0.8s ease-out forwards; }
+        @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+
+        .loading-logo {
+            font-family: 'Syncopate', sans-serif;
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
+        }
+
+        .loading-percentage {
+            font-family: 'Syncopate', sans-serif;
+            font-size: clamp(1.5rem, 6vw, 3rem);
+            font-weight: 700;
+            color: var(--gold-color);
+        }
+
+        .loading-percentage span { font-size: 0.5em; opacity: 0.6; }
+        .loading-bar-container { width: min(180px, 60vw); height: 2px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .loading-bar { width: 0%; height: 100%; background: var(--gold-gradient); background-size: 200% auto; animation: shine 2s linear infinite; }
+        .loading-text { color: #555; font-size: 0.65rem; letter-spacing: 0.2em; }
+
+        #introSection {
+            position: fixed; inset: 0;
+            background: var(--bg-color);
+            z-index: 10002;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #introSection.visible { opacity: 1; visibility: visible; }
+        #introSection.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        .intro-particles { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+        .intro-particle {
+            position: absolute;
+            width: 2px; height: 2px;
+            background: var(--gold-color);
+            border-radius: 50%;
+            opacity: 0;
+            animation: floatUp 12s infinite ease-in-out;
+        }
+
+        @keyframes floatUp {
+            0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10%, 90% { opacity: 0.4; }
+            100% { transform: translateY(-50px) scale(1); opacity: 0; }
+        }
+
+        .progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: var(--gold-gradient); z-index: 100; width: 0%; }
+        .particle { position: absolute; background: var(--gold-color); border-radius: 50%; pointer-events: none; z-index: 50; }
+        .golden-bullet { width: 3px; height: 100%; background: var(--gold-gradient); position: absolute; left: 0; top: 0; border-radius: 4px; }
+
+        #sidebar {
+            position: fixed;
+            left: 0; top: 0;
+            height: 100vh;
+            width: 260px;
+            background: rgba(6, 6, 6, 0.98);
+            border-right: 1px solid rgba(212, 175, 55, 0.12);
+            z-index: 9998;
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 1.25rem;
+            backdrop-filter: blur(20px);
+        }
+
+        #sidebar.open { transform: translateX(0); }
+
+        .sidebar-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9996;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        @media (max-width: 768px) {
+            #sidebar { width: 240px; padding: 1.25rem 1rem; }
+        }
+
+        .sidebar-header { text-align: center; padding-bottom: 1.25rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 1.5rem; }
+        .sidebar-header h3 { font-family: 'Syncopate', sans-serif; font-size: 0.6rem; color: var(--gold-color); letter-spacing: 0.2em; margin: 0; }
+        .sidebar-social { display: flex; flex-direction: column; gap: 0.6rem; flex: 1; justify-content: center; }
+
+        .sidebar-social-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.75rem 0.875rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            color: #888;
+            text-decoration: none;
+            transition: all 0.3s;
+            transform: translateX(-15px);
+            opacity: 0;
+        }
+
+        #sidebar.open .sidebar-social-item { transform: translateX(0); opacity: 1; }
+        #sidebar.open .sidebar-social-item:nth-child(1) { transition-delay: 0.05s; }
+        #sidebar.open .sidebar-social-item:nth-child(2) { transition-delay: 0.1s; }
+        #sidebar.open .sidebar-social-item:nth-child(3) { transition-delay: 0.15s; }
+        #sidebar.open .sidebar-social-item:nth-child(4) { transition-delay: 0.2s; }
+
+        .sidebar-social-item:hover { background: rgba(212, 175, 55, 0.08); border-color: rgba(212, 175, 55, 0.2); color: var(--gold-color); transform: translateX(3px); }
+        .sidebar-social-item i { font-size: 1.1rem; width: 26px; text-align: center; }
+        .sidebar-social-item span { font-size: 0.75rem; letter-spacing: 0.08em; font-weight: 300; }
+
+        .sidebar-footer { padding-top: 1.25rem; border-top: 1px solid rgba(255, 255, 255, 0.05); text-align: center; }
+        .sidebar-footer p { font-size: 0.6rem; color: #444; letter-spacing: 0.1em; }
+
+        @media (max-width: 768px) {
+            .premium-card { border-radius: 20px; }
+            h1 { font-size: 2rem !important; }
+            h2 { font-size: 1.5rem !important; }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.6rem !important; }
+        }
+
+        @media (hover: none) { 
+            .premium-card:hover::before { opacity: 0; } 
+            .premium-btn:hover { transform: none; }
+        }
+    </style>
+</head>
+<body class="selection:bg-gold-500 selection:text-black no-scroll card-glow-on">
+
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <button id="sidebarToggle" aria-label="Toggle Sidebar">
+        <i class="fa-solid fa-bars" id="sidebarIcon"></i>
+    </button>
+
+    <button id="settingsBtn" aria-label="Settings">
+        <i class="fa-solid fa-gear"></i>
+    </button>
+
+    <div class="settings-overlay" id="settingsOverlay"></div>
+    <aside id="settingsPanel">
+        <div class="settings-header">
+            <div class="settings-header-left">
+                <i class="fa-solid fa-display"></i>
+                <h3>НАСТРОЙКА ГРАФИКИ</h3>
+            </div>
+            <button class="settings-close" id="settingsClose">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-section-title">Основные</div>
+            <div class="settings-options">
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        <span>Фонарик</span>
+                    </div>
+                    <div class="toggle-switch active" id="toggleFlashlight"></div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fa-solid fa-arrow-pointer"></i>
+                        <span>Кастомный курсор</span>
+                    </div>
+                    <div class="toggle-switch" id="toggleCursor"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-section-title">Фон</div>
+            <div class="settings-options">
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fa-solid fa-meteor"></i>
+                        <span>Анимированный фон</span>
+                    </div>
+                    <div class="toggle-switch" id="toggleAnimatedBg"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-section-title">Эффекты свечения</div>
+            <div class="settings-options">
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fa-solid fa-sun"></i>
+                        <span>Подсвечивание карточек</span>
+                    </div>
+                    <div class="toggle-switch active" id="toggleCardGlow"></div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fa-solid fa-sparkles"></i>
+                        <span>Красивое свечение</span>
+                    </div>
+                    <div class="toggle-switch" id="toggleBeautifulGlow"></div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fa-solid fa-star"></i>
+                        <span>Ультра-свечение</span>
+                    </div>
+                    <div class="toggle-switch" id="toggleUltraGlow"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-section-title">Эффекты карточек</div>
+            <div class="settings-options">
+                <div class="setting-item" id="tiltItem">
+                    <div class="setting-label">
+                        <i class="fa-solid fa-cube"></i>
+                        <span>3D покачивание</span>
+                    </div>
+                    <div class="toggle-switch active" id="toggle3DTilt"></div>
+                </div>
+                <div class="setting-item disabled" id="liftItem">
+                    <div class="setting-label">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        <span>Эффект подлёта</span>
+                    </div>
+                    <div class="toggle-switch" id="toggleHoverLift"></div>
+                </div>
+                <div class="settings-note">
+                    <p><i class="fa-solid fa-info-circle"></i>Эффект подлёта не работает вместе с 3D покачиванием</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-section-title">Анимации</div>
+            <div class="settings-options">
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fa-solid fa-wind"></i>
+                        <span>Эффект блюра</span>
+                    </div>
+                    <div class="toggle-switch" id="toggleBlurEffect"></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <div id="loadingScreen">
+        <div class="loading-logo">VORTEXFLARE</div>
+        <div class="loading-percentage" id="loadingPercentage">0<span>%</span></div>
+        <div class="loading-bar-container"><div class="loading-bar" id="loadingBar"></div></div>
+        <div class="loading-text">the website is loading...</div>
+    </div>
+
+    <section id="introSection">
+        <div class="intro-particles" id="introParticles"></div>
+        <div class="text-center z-10 px-4">
+            <div class="mb-6 opacity-0" id="introLogo">
+                <span class="font-sync text-xl md:text-3xl text-gold-gradient tracking-[0.2em]">VORTEX FLARE</span>
+            </div>
+            <p class="text-gray-500 text-[10px] md:text-xs tracking-[0.2em] uppercase mb-10 opacity-0" id="introText">Добро пожаловать на мой сайт</p>
+            <button id="introStartBtn" class="premium-btn intro-btn opacity-0">
+                <span class="flex items-center gap-3">
+                    <i class="fa-solid fa-play text-base"></i>
+                    <span class="font-sync text-xs md:text-sm">Начать</span>
+                </span>
+            </button>
+            <p class="text-gray-600 text-[9px] md:text-[10px] tracking-widest uppercase mt-6 opacity-0" id="introHint">
+                <i class="fa-solid fa-hand-pointer mr-2"></i>Нажмите для продолжения
+            </p>
+        </div>
+    </section>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside id="sidebar">
+        <div class="sidebar-header"><h3>СОЦИАЛЬНЫЕ СЕТИ</h3></div>
+        <nav class="sidebar-social">
+            <a href="https://t.me/Svetlana_1972_2025" target="_blank" class="sidebar-social-item"><i class="fab fa-telegram-plane"></i><span>Telegram</span></a>
+            <a href="https://www.tiktok.com/@vortexflare_?lang=ru-RU" target="_blank" class="sidebar-social-item"><i class="fab fa-tiktok"></i><span>TikTok</span></a>
+            <a href="https://www.instagram.com/cloudsafer_07/" target="_blank" class="sidebar-social-item"><i class="fab fa-instagram"></i><span>Instagram</span></a>
+            <a href="https://www.youtube.com/@V-X-F-07" target="_blank" class="sidebar-social-item"><i class="fab fa-youtube"></i><span>YouTube</span></a>
+        </nav>
+        <div class="sidebar-footer"><p>© 2026 VortexFlare</p></div>
+    </aside>
+
+    <div class="progress-bar" id="progressBar"></div>
+    <canvas id="starfield"></canvas>
+    <div id="particle-container" class="fixed inset-0 pointer-events-none z-50 overflow-hidden"></div>
+
+    <main class="relative z-10" id="mainContent">
+        <section id="heroSection" class="min-h-screen flex flex-col justify-center items-center px-4 py-16 md:py-20 relative">
+            <div class="text-center z-20 max-w-6xl mx-auto flex flex-col items-center w-full">
+                <h1 class="hero-title text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-8 md:mb-10 relative leading-tight" id="heroTitle">
+                    <span class="title-part text-white">Я —</span>
+                    <span class="title-part text-gold-gradient"> Vortex</span>
+                    <span class="title-part text-gold-gradient"> Flare</span>
+                </h1>
+                <div class="h-[1px] w-0 bg-gradient-to-r from-transparent via-gold-500 to-transparent hero-line mb-8 md:mb-10 mx-auto"></div>
+                <p id="realName" class="text-base md:text-xl lg:text-2xl text-gray-400 tracking-[0.15em] md:tracking-[0.2em] uppercase opacity-0 hero-block font-light px-4">
+                    Настоящее имя — <span class="text-white font-normal">Timur</span>
+                </p>
+            </div>
+            <div class="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 opacity-0 hero-scroll">
+                <i class="fa-solid fa-chevron-down text-gold-500 text-lg md:text-xl animate-bounce"></i>
+            </div>
+        </section>
+
+        <section class="py-20 md:py-32 container mx-auto px-4 md:px-6 max-w-6xl">
+            <div class="premium-card p-6 md:p-10 lg:p-16 reveal-box blur-reveal">
+                <div class="flex items-center gap-3 md:gap-4 mb-8 md:mb-10">
+                    <div class="h-[1px] w-8 md:w-12 bg-gold-500"></div>
+                    <span class="font-sync text-gold-300 text-xs md:text-sm tracking-widest uppercase">About Me</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16">
+                    <div class="relative pl-5 md:pl-6 space-y-5 md:space-y-6">
+                        <div class="golden-bullet"></div>
+                        <p class="text-base md:text-lg lg:text-xl text-gray-300 font-light leading-relaxed">Я могу создать вам телеграмм - чат бота, по выгодной цене и в краткие сроки, от простенького до сложного.</p>
+                        <p class="text-sm md:text-base text-gray-400 leading-relaxed">От простых чат ботов которые просто пишут "привет! рад тебя видеть, вот твой курс:" до сложных продвинутых чат-ботов с админ-панелью, рассылками, красивым меню и так далее.</p>
+                    </div>
+                    <div class="space-y-6 md:space-y-8">
+                        <div class="premium-card p-5 md:p-8 bg-black/40 border-white/5 hover:border-gold-500/30">
+                            <i class="fa-solid fa-code text-gold-500 text-xl md:text-2xl mb-3 md:mb-4"></i>
+                            <p class="text-sm md:text-base text-gray-300 font-light leading-relaxed">От скромного лендинга с кратким приветствием, до хорошего лендинга с красивыми анимациями и стильным дизайном.</p>
+                        </div>
+                        <div class="pt-3 md:pt-4 border-t border-white/10">
+                            <p class="text-gold-100/70 text-xs md:text-sm italic font-light tracking-wide">
+                                <i class="fa-solid fa-circle-info mr-2"></i>Цена лендинга и чат бота будет зависеть от его сложности, примерные цены ниже.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-16 md:py-24 container mx-auto px-4 md:px-6 max-w-7xl">
+            <div class="text-center mb-12 md:mb-20">
+                <span class="inline-block px-4 py-2 rounded-full border border-gold-500/30 bg-gold-900/10 text-gold-300 text-[10px] md:text-xs font-sync tracking-widest uppercase mb-4 reveal-item blur-reveal">Pricing</span>
+                <h2 class="text-2xl md:text-4xl lg:text-5xl font-light text-white reveal-item blur-reveal">Стоимость Услуг</h2>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
+                <div class="premium-card p-5 md:p-8 lg:p-12 reveal-item blur-reveal">
+                    <h3 class="text-lg md:text-2xl font-sync text-gold-gradient mb-6 md:mb-10 flex items-center gap-3 md:gap-4">
+                        <i class="fa-brands fa-telegram text-white/50"></i> Чат-боты
+                    </h3>
+                    <div class="space-y-3 md:space-y-5 relative z-10">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 md:p-5 rounded-xl md:rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-transparent hover:border-gold-500/20 group">
+                            <span class="text-gray-300 font-light text-sm md:text-lg mb-2 sm:mb-0 group-hover:text-white transition-colors">Простенький</span>
+                            <span class="font-mono text-gold-300 font-bold bg-black/50 px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-gold-500/20 text-xs md:text-sm">2000 - 5000 ₽</span>
+                        </div>
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 md:p-5 rounded-xl md:rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-transparent hover:border-gold-500/20 group">
+                            <span class="text-gray-300 font-light text-sm md:text-lg mb-2 sm:mb-0 group-hover:text-white transition-colors">Средний</span>
+                            <span class="font-mono text-gold-300 font-bold bg-black/50 px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-gold-500/20 text-xs md:text-sm">5000 - 8000 ₽</span>
+                        </div>
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 md:p-5 rounded-xl md:rounded-2xl bg-gradient-to-r from-gold-900/20 to-transparent border border-gold-500/30 group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gold-500/5 group-hover:bg-gold-500/10 transition-colors"></div>
+                            <span class="text-white font-medium text-sm md:text-lg mb-2 sm:mb-0 relative z-10">Продвинутый</span>
+                            <span class="font-mono text-gold-100 font-bold bg-gold-500/20 px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-gold-500/40 relative z-10 text-xs md:text-sm">10 000 - 15 000 ₽</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="premium-card p-5 md:p-8 lg:p-12 reveal-item blur-reveal">
+                    <h3 class="text-lg md:text-2xl font-sync text-gold-gradient mb-6 md:mb-10 flex items-center gap-3 md:gap-4">
+                        <i class="fa-solid fa-layer-group text-white/50"></i> Лендинги
+                    </h3>
+                    <div class="space-y-3 md:space-y-5 relative z-10">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 md:p-5 rounded-xl md:rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-transparent hover:border-gold-500/20 group">
+                            <span class="text-gray-300 font-light text-sm md:text-lg mb-2 sm:mb-0 group-hover:text-white transition-colors">Простенький</span>
+                            <span class="font-mono text-gold-300 font-bold bg-black/50 px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-gold-500/20 text-xs md:text-sm">1000 - 3000 ₽</span>
+                        </div>
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 md:p-5 rounded-xl md:rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-transparent hover:border-gold-500/20 group">
+                            <span class="text-gray-300 font-light text-sm md:text-lg mb-2 sm:mb-0 group-hover:text-white transition-colors">Средний</span>
+                            <span class="font-mono text-gold-300 font-bold bg-black/50 px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-gold-500/20 text-xs md:text-sm">3000 - 4000 ₽</span>
+                        </div>
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 md:p-5 rounded-xl md:rounded-2xl bg-gradient-to-r from-gold-900/20 to-transparent border border-gold-500/30 group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gold-500/5 group-hover:bg-gold-500/10 transition-colors"></div>
+                            <span class="text-white font-medium text-sm md:text-lg mb-2 sm:mb-0 relative z-10">Продвинутый</span>
+                            <span class="font-mono text-gold-100 font-bold bg-gold-500/20 px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-gold-500/40 relative z-10 text-xs md:text-sm">4000 - 8000 ₽</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 md:mt-16 text-center">
+                <p class="text-gray-500 text-[9px] md:text-xs uppercase tracking-[0.15em] md:tracking-[0.2em] leading-loose max-w-3xl mx-auto border-t border-white/5 pt-6 md:pt-8 reveal-item blur-reveal px-4">
+                    Учитывайте, что точная цена зависит от ваших личных требований и сложности лендинга/чат - бота, и она может быть как и выше примерной цены, так и ниже.
+                </p>
+            </div>
+        </section>
+
+        <section class="py-20 md:py-32 container mx-auto px-4 md:px-6 max-w-4xl text-center">
+            <div class="premium-card p-8 md:p-12 lg:p-20 relative overflow-hidden group reveal-box blur-reveal">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_top,_rgba(212,175,55,0.08),transparent_70%)] pointer-events-none"></div>
+                <span class="font-sync text-gold-500 text-[10px] md:text-xs tracking-[0.2em] md:tracking-[0.3em] uppercase block mb-6 md:mb-8">Contact Me</span>
+                <h2 class="text-xl md:text-3xl lg:text-5xl font-light mb-4 md:mb-6 text-white">Остались вопросы?</h2>
+                <p class="text-gray-400 text-sm md:text-lg font-light mb-8 md:mb-12">Хотите обсудить подробнее? Скорей пиши!</p>
+                <div class="flex flex-wrap justify-center gap-4 md:gap-6 lg:gap-8 mb-10 md:mb-16 relative z-10">
+                    <a href="https://t.me/Svetlana_1972_2025" target="_blank" class="premium-btn w-14 h-14 md:w-16 lg:w-20 md:h-16 lg:h-20 text-lg md:text-xl lg:text-2xl flex items-center justify-center rounded-full hover:scale-105 transition-transform"><i class="fab fa-telegram-plane"></i></a>
+                    <a href="https://www.tiktok.com/@vortexflare_?lang=ru-RU" target="_blank" class="premium-btn w-14 h-14 md:w-16 lg:w-20 md:h-16 lg:h-20 text-lg md:text-xl lg:text-2xl flex items-center justify-center rounded-full hover:scale-105 transition-transform"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.instagram.com/cloudsafer_07/" target="_blank" class="premium-btn w-14 h-14 md:w-16 lg:w-20 md:h-16 lg:h-20 text-lg md:text-xl lg:text-2xl flex items-center justify-center rounded-full hover:scale-105 transition-transform"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.youtube.com/@V-X-F-07" target="_blank" class="premium-btn w-14 h-14 md:w-16 lg:w-20 md:h-16 lg:h-20 text-lg md:text-xl lg:text-2xl flex items-center justify-center rounded-full hover:scale-105 transition-transform"><i class="fab fa-youtube"></i></a>
+                </div>
+                <div class="relative z-10">
+                    <a href="https://vortexflare01.github.io/GlobalPrime/" target="_blank" class="premium-btn px-6 md:px-10 lg:px-12 py-3 md:py-4 lg:py-5 text-[9px] md:text-[10px] lg:text-xs uppercase tracking-[0.15em] md:tracking-[0.25em] lg:tracking-[0.3em] font-semibold hover:bg-gold-500 hover:text-black hover:border-gold-500 transition-all inline-block">Сайт с моим брендом</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-12 md:py-20 border-t border-white/5 relative z-20 bg-black/90">
+        <div class="container mx-auto px-4 md:px-6 flex flex-col items-center gap-6 md:gap-8">
+            <div class="text-center space-y-3 md:space-y-4">
+                <p class="font-sync text-base md:text-xl font-bold tracking-widest text-gold-gradient">Created By VortexFlare</p>
+                <p class="text-[9px] md:text-xs text-gray-600 tracking-wider uppercase">2026 (c) все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+        // ==================== STATE (Default values) ====================
+        let mouseX = -100, mouseY = -100;
+        let cursorX = -100, cursorY = -100;
+        let ringX = -100, ringY = -100;
+        let glowX = -100, glowY = -100;
+        
+        // DEFAULT ON: Flashlight, Card Glow, 3D Tilt
+        let isFlashlightOn = true;
+        let customCursorOn = false;
+        let beautifulGlowOn = false;
+        let ultraGlowOn = false;
+        let tilt3dOn = true;
+        let hoverLiftOn = false;
+        let cardGlowOn = true;
+        let blurEffectOn = false;
+        let animatedBgOn = false;
+        
+        const isDesktop = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+        const cursorDot = document.getElementById('cursorDot');
+        const cursorRing = document.getElementById('cursorRing');
+        const cursorGlow = document.getElementById('cursorGlow');
+
+        // ==================== OPTIMIZED RAF LOOP ====================
+        function tick() {
+            if (customCursorOn && isDesktop) {
+                cursorX += (mouseX - cursorX) * 0.3;
+                cursorY += (mouseY - cursorY) * 0.3;
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+                
+                cursorDot.style.transform = `translate3d(${cursorX - 3}px, ${cursorY - 3}px, 0)`;
+                cursorRing.style.transform = `translate3d(${ringX - 18}px, ${ringY - 18}px, 0)`;
+            }
+
+            if (isFlashlightOn) {
+                const speed = ultraGlowOn ? 0.04 : (beautifulGlowOn ? 0.06 : 0.08);
+                glowX += (mouseX - glowX) * speed;
+                glowY += (mouseY - glowY) * speed;
+                const offset = ultraGlowOn ? 190 : (beautifulGlowOn ? 175 : 140);
+                cursorGlow.style.transform = `translate3d(${glowX - offset}px, ${glowY - offset}px, 0)`;
+            }
+
+            requestAnimationFrame(tick);
+        }
+        tick();
+
+        document.addEventListener('mousemove', e => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        }, { passive: true });
+
+        if (isDesktop) {
+            document.addEventListener('mouseover', e => {
+                if (e.target.closest('a, button, .premium-card, .toggle-switch')) cursorRing.classList.add('hover');
+            });
+            document.addEventListener('mouseout', e => {
+                if (e.target.closest('a, button, .premium-card, .toggle-switch')) cursorRing.classList.remove('hover');
+            });
+        }
+
+        // ==================== SETTINGS ====================
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const settingsOverlay = document.getElementById('settingsOverlay');
+        const settingsClose = document.getElementById('settingsClose');
+
+        function openSettings() {
+            settingsPanel.classList.add('open');
+            settingsOverlay.classList.add('active');
+            settingsBtn.classList.add('open');
+        }
+
+        function closeSettings() {
+            settingsPanel.classList.remove('open');
+            settingsOverlay.classList.remove('active');
+            settingsBtn.classList.remove('open');
+        }
+
+        settingsBtn.onclick = () => settingsPanel.classList.contains('open') ? closeSettings() : openSettings();
+        settingsOverlay.onclick = closeSettings;
+        settingsClose.onclick = closeSettings;
+
+        // Toggle Flashlight
+        document.getElementById('toggleFlashlight').onclick = function() {
+            isFlashlightOn = !isFlashlightOn;
+            this.classList.toggle('active', isFlashlightOn);
+            if (isFlashlightOn) {
+                glowX = mouseX; glowY = mouseY;
+                cursorGlow.classList.add('active');
+                document.body.classList.add('flashlight-on');
+            } else {
+                cursorGlow.classList.remove('active');
+                document.body.classList.remove('flashlight-on');
+            }
+        };
+
+        // Toggle Custom Cursor
+        document.getElementById('toggleCursor').onclick = function() {
+            customCursorOn = !customCursorOn;
+            this.classList.toggle('active', customCursorOn);
+            if (customCursorOn) {
+                cursorX = ringX = mouseX;
+                cursorY = ringY = mouseY;
+                document.body.classList.add('custom-cursor-on');
+            } else {
+                document.body.classList.remove('custom-cursor-on');
+            }
+        };
+
+        // Toggle Animated Background
+        document.getElementById('toggleAnimatedBg').onclick = function() {
+            animatedBgOn = !animatedBgOn;
+            this.classList.toggle('active', animatedBgOn);
+            document.body.classList.toggle('animated-bg', animatedBgOn);
+            initStars();
+        };
+
+        // Toggle Card Glow
+        document.getElementById('toggleCardGlow').onclick = function() {
+            cardGlowOn = !cardGlowOn;
+            this.classList.toggle('active', cardGlowOn);
+            document.body.classList.toggle('card-glow-on', cardGlowOn);
+        };
+
+        // Toggle Beautiful Glow
+        document.getElementById('toggleBeautifulGlow').onclick = function() {
+            beautifulGlowOn = !beautifulGlowOn;
+            this.classList.toggle('active', beautifulGlowOn);
+            document.body.classList.toggle('beautiful-glow', beautifulGlowOn);
+        };
+
+        // Toggle Ultra Glow
+        document.getElementById('toggleUltraGlow').onclick = function() {
+            ultraGlowOn = !ultraGlowOn;
+            this.classList.toggle('active', ultraGlowOn);
+            document.body.classList.toggle('ultra-glow', ultraGlowOn);
+        };
+
+        // Toggle 3D Tilt
+        document.getElementById('toggle3DTilt').onclick = function() {
+            tilt3dOn = !tilt3dOn;
+            this.classList.toggle('active', tilt3dOn);
+            
+            const liftItem = document.getElementById('liftItem');
+            if (tilt3dOn) {
+                liftItem.classList.add('disabled');
+                if (hoverLiftOn) {
+                    hoverLiftOn = false;
+                    document.getElementById('toggleHoverLift').classList.remove('active');
+                    document.body.classList.remove('hover-lift-on');
+                }
+            } else {
+                liftItem.classList.remove('disabled');
+            }
+        };
+
+        // Toggle Hover Lift
+        document.getElementById('toggleHoverLift').onclick = function() {
+            if (tilt3dOn) return;
+            hoverLiftOn = !hoverLiftOn;
+            this.classList.toggle('active', hoverLiftOn);
+            document.body.classList.toggle('hover-lift-on', hoverLiftOn);
+        };
+
+        // Toggle Blur Effect
+        document.getElementById('toggleBlurEffect').onclick = function() {
+            blurEffectOn = !blurEffectOn;
+            this.classList.toggle('active', blurEffectOn);
+            document.body.classList.toggle('blur-effect-on', blurEffectOn);
+        };
+
+        // ==================== LOADING ====================
+        (function load() {
+            const duration = 4500, start = Date.now();
+            function update() {
+                const p = Math.min(Math.floor((Date.now() - start) / duration * 100), 100);
+                document.getElementById('loadingBar').style.width = p + '%';
+                document.getElementById('loadingPercentage').innerHTML = p + '<span>%</span>';
+                if (p < 100) return requestAnimationFrame(update);
+                
+                setTimeout(() => {
+                    document.getElementById('loadingScreen').classList.add('fade-out');
+                    setTimeout(() => {
+                        document.getElementById('loadingScreen').style.display = 'none';
+                        document.getElementById('introSection').classList.add('visible');
+                        gsap.timeline({ delay: 0.2 })
+                            .to('#introLogo', { opacity: 1, duration: 0.8 })
+                            .to('#introText', { opacity: 1, duration: 0.6 }, "-=0.4")
+                            .to('#introStartBtn', { opacity: 1, duration: 0.6 }, "-=0.3")
+                            .to('#introHint', { opacity: 1, duration: 0.5 }, "-=0.2");
+                    }, 800);
+                }, 200);
+            }
+            requestAnimationFrame(update);
+        })();
+
+        // ==================== INTRO PARTICLES ====================
+        (function() {
+            const c = document.getElementById('introParticles');
+            for (let i = 0; i < 10; i++) {
+                const p = document.createElement('div');
+                p.className = 'intro-particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDelay = Math.random() * 12 + 's';
+                p.style.animationDuration = (Math.random() * 6 + 10) + 's';
+                c.appendChild(p);
+            }
+        })();
+
+        // ==================== STARFIELD ====================
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function initStars() {
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+            
+            const baseCount = animatedBgOn ? 120 : 40;
+            const count = Math.min(baseCount, Math.floor(innerWidth * innerHeight / (animatedBgOn ? 12000 : 35000)));
+            
+            stars = Array.from({ length: count }, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                s: animatedBgOn ? (Math.random() * 2 + 0.5) : (Math.random() * 1 + 0.3),
+                v: animatedBgOn ? (Math.random() * 0.5 + 0.1) : (Math.random() * 0.02 + 0.008),
+                a: Math.random() * 0.3 + 0.15,
+                pulse: Math.random() * Math.PI * 2,
+                pulseSpeed: Math.random() * 0.02 + 0.01
+            }));
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const glowMultiplier = ultraGlowOn ? 1.5 : (beautifulGlowOn ? 1.2 : 1);
+            
+            for (const s of stars) {
+                let alpha = s.a;
+                let size = s.s;
+                
+                if (animatedBgOn) {
+                    s.pulse += s.pulseSpeed;
+                    const pulse = Math.sin(s.pulse) * 0.3 + 0.7;
+                    alpha = s.a * pulse * glowMultiplier;
+                    size = s.s * (0.8 + pulse * 0.4);
+                }
+                
+                if (animatedBgOn && (beautifulGlowOn || ultraGlowOn)) {
+                    const gradient = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, size * 4);
+                    gradient.addColorStop(0, `rgba(212, 175, 55, ${alpha * 0.3})`);
+                    gradient.addColorStop(1, 'transparent');
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, size * 4, 0, 6.28);
+                    ctx.fill();
+                }
+                
+                ctx.fillStyle = animatedBgOn 
+                    ? `rgba(255, 240, 200, ${alpha})` 
+                    : `rgba(255, 255, 255, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, size, 0, 6.28);
+                ctx.fill();
+                
+                s.y -= s.v;
+                if (animatedBgOn) {
+                    s.x += Math.sin(s.pulse) * 0.2;
+                }
+                
+                if (s.y < -10) { 
+                    s.y = canvas.height + 10; 
+                    s.x = Math.random() * canvas.width; 
+                }
+                if (s.x < -10) s.x = canvas.width + 10;
+                if (s.x > canvas.width + 10) s.x = -10;
+            }
+            
+            if (!document.hidden) requestAnimationFrame(drawStars);
+        }
+
+        addEventListener('resize', initStars);
+        initStars();
+        drawStars();
+
+        // ==================== PARTICLES ====================
+        function boom(x, y, n = 15) {
+            const c = document.getElementById('particle-container');
+            for (let i = 0; i < n; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const sz = Math.random() * 3 + 1.5;
+                p.style.cssText = `width:${sz}px;height:${sz}px;left:${x}px;top:${y}px`;
+                c.appendChild(p);
+                const a = Math.random() * 6.28, v = Math.random() * 60 + 30;
+                gsap.to(p, { x: Math.cos(a) * v, y: Math.sin(a) * v, opacity: 0, duration: Math.random() * 0.35 + 0.2, onComplete: () => p.remove() });
+            }
+        }
+
+        // ==================== START BUTTON ====================
+        document.getElementById('introStartBtn').onclick = function(e) {
+            const r = this.getBoundingClientRect();
+            boom(r.left + r.width / 2, r.top + r.height / 2, 20);
+            
+            // Apply default settings
+            isFlashlightOn = true;
+            glowX = mouseX; glowY = mouseY;
+            cursorGlow.classList.add('active');
+            document.body.classList.add('flashlight-on');
+            
+            gsap.to(document.getElementById('introSection'), { opacity: 0, duration: 0.6, onComplete: () => {
+                document.getElementById('introSection').classList.replace('visible', 'hidden');
+                document.body.classList.remove('no-scroll');
+                document.getElementById('sidebarToggle').classList.add('visible');
+                document.getElementById('settingsBtn').classList.add('visible');
+                
+                setTimeout(() => {
+                    document.getElementById('heroTitle').classList.add('revealed');
+                }, 200);
+                
+                gsap.timeline({ delay: 0.6 })
+                    .to(".hero-line", { width: "180px", duration: 0.8 })
+                    .to(".hero-block", { opacity: 1, duration: 0.6 }, "-=0.4")
+                    .to(".hero-scroll", { opacity: 1, duration: 0.5 }, "-=0.2");
+            }});
+        };
+
+        // ==================== SIDEBAR ====================
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+
+        function toggleSidebar() {
+            const open = sidebar.classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('active', open);
+            sidebarToggle.classList.toggle('open', open);
+            document.getElementById('sidebarIcon').className = open ? 'fa-solid fa-times' : 'fa-solid fa-bars';
+        }
+
+        sidebarToggle.onclick = toggleSidebar;
+        document.getElementById('sidebarOverlay').onclick = toggleSidebar;
+
+        // ==================== SCROLL ANIMATIONS ====================
+        gsap.to("#progressBar", { width: "100%", ease: "none", scrollTrigger: { scrub: 0.5 } });
+
+        gsap.utils.toArray('.reveal-box').forEach(el => {
+            gsap.from(el, { 
+                y: 25, 
+                opacity: 0, 
+                duration: 0.5, 
+                scrollTrigger: { 
+                    trigger: el, 
+                    toggleActions: "play reverse play reverse", 
+                    start: "top 88%",
+                    onEnter: () => el.classList.add('revealed'),
+                    onLeaveBack: () => el.classList.remove('revealed')
+                } 
+            });
+        });
+
+        gsap.utils.toArray('.reveal-item').forEach((el, i) => {
+            gsap.from(el, { 
+                y: 20, 
+                opacity: 0, 
+                duration: 0.4, 
+                delay: i * 0.015, 
+                scrollTrigger: { 
+                    trigger: el, 
+                    toggleActions: "play reverse play reverse", 
+                    start: "top 88%",
+                    onEnter: () => el.classList.add('revealed'),
+                    onLeaveBack: () => el.classList.remove('revealed')
+                } 
+            });
+        });
+
+        // ==================== 3D TILT ====================
+        if (isDesktop) {
+            document.querySelectorAll('.premium-card').forEach(card => {
+                card.style.transition = 'transform 0.15s ease-out, border-color 0.3s, box-shadow 0.3s, filter 1.5s ease-out';
+                
+                card.onmousemove = e => {
+                    if (!isFlashlightOn) return;
+                    
+                    const r = card.getBoundingClientRect();
+                    const x = (e.clientX - r.left) / r.width - 0.5;
+                    const y = (e.clientY - r.top) / r.height - 0.5;
+                    
+                    if (tilt3dOn && !hoverLiftOn) {
+                        card.style.transform = `perspective(600px) rotateY(${x * 15}deg) rotateX(${y * -15}deg) scale3d(1.02, 1.02, 1.02)`;
+                    }
+                    
+                    card.style.setProperty('--card-x', (e.clientX - r.left) + 'px');
+                    card.style.setProperty('--card-y', (e.clientY - r.top) + 'px');
+                };
+                
+                card.onmouseleave = () => {
+                    if (!hoverLiftOn) {
+                        card.style.transform = '';
+                    }
+                };
+            });
+        }
+
+        document.onvisibilitychange = () => { if (!document.hidden) drawStars(); };
+    </script>
+</body>
+</html>
